@@ -1,6 +1,6 @@
 ﻿namespace ZebraPuzzle
 {
-    public class Rule : BaseRule
+    public record Rule : BaseRule
     {
         private bool SharesSomeValue(Hypothesis hypothesis) =>
             Values.Zip(hypothesis.Values).Any(x => x.First.HasValue && x.First == x.Second);

@@ -6,7 +6,7 @@ namespace ZebraPuzzle
 {
     public static class ZebraPuzzle
     {
-        private static Solver.Solution solution = new Solver().Solve();
+        private static Solution solution = new Solver().Solve();
 
         public static Nationality DrinksWater()
         {

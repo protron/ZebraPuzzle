@@ -1,6 +1,6 @@
 ﻿namespace ZebraPuzzle
 {
-    public class ColorPositionRule
+    public record ColorPositionRule
     {
         private const int MinPositionRightColor = 2;
         private const int MaxPositionLeftColor = 4;

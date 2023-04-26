@@ -1,6 +1,6 @@
 ﻿namespace ZebraPuzzle
 {
-    public class Hypothesis : BaseRule
+    public record Hypothesis : BaseRule
     {
     }
 }

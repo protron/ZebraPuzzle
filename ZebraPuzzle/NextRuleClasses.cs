@@ -1,6 +1,6 @@
 ﻿namespace ZebraPuzzle
 {
-    public class NextRuleBase
+    public record NextRuleBase
     {
         protected bool MatchesPositions(
             IEnumerable<Hypothesis> hypotheses, Func<Hypothesis, bool> matchOne, Func<Hypothesis, bool> matchTwo)
@@ -33,7 +33,7 @@
         }
     }
 
-    public class NextNationalityColorRule : NextRuleBase
+    public record NextNationalityColorRule : NextRuleBase
     {
         public Nationality Nationality { get; set; }
         public Color Color { get; set; }
@@ -45,7 +45,7 @@
                 x => x.Color == Color);
     }
 
-    public class NextSmokePetRule : NextRuleBase
+    public record NextSmokePetRule : NextRuleBase
     {
         public Pet Pet { get; set; }
         public Smoke Smoke { get; set; }

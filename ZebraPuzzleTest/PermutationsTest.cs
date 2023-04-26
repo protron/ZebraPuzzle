@@ -4,9 +4,9 @@ namespace ZebraPuzzleTest
 {
     public class PermutationsTest
     {
-        public enum TestEnum3 { T1, T2, T3 }
+        enum TestEnum3 { T1, T2, T3 }
 
-        public enum TestEnum5 { T1, T2, T3, T4, T5 }
+        enum TestEnum5 { T1, T2, T3, T4, T5 }
 
         [Fact]
         public void Permutations_FromEnum_TestEnum3()
