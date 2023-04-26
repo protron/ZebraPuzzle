@@ -12,26 +12,39 @@ public enum Pet { Dog , Snails , Fox , Horse , Zebra }
 public enum Drink { Coffee , Tea , Milk , OrangeJuice , Water }
 public enum Smoke { OldGold , Kools , Chesterfields , LuckyStrike , Parliaments }
 
-public class Fact
+public class BaseFact
 {
-    public Color? Color {get; set;}
-    public Nationality? Nationality {get; set;}
-    public Pet? Pet {get; set;}
-    public Drink? Drink {get; set;}
-    public Smoke? Smoke {get; set;}
-    public int? Position {get; set;}
-    
-    public const int Props = 6;
-    public int GetPropsMissing() => (
-        (Color == null ? 1 : 0) +
-        (Nationality == null ? 1 : 0) +
-        (Pet == null ? 1 : 0) +
-        (Drink == null ? 1 : 0) +
-        (Smoke == null ? 1 : 0) +
-        (Position == null ? 1 : 0)
-    );
+    public int? Position { get; set; }
+    public Color? Color { get; set; }
+    public Nationality? Nationality { get; set; }
+    public Pet? Pet { get; set; }
+    public Drink? Drink { get; set; }
+    public Smoke? Smoke { get; set; }
 
-    public int TryIndex = 0;
+    public int?[] Values => new int?[] {
+        Position,
+        (int?)Color,
+        (int?)Nationality,
+        (int?)Pet,
+        (int?)Drink,
+        (int?)Smoke,
+    };
+}
+
+public class TryFact : BaseFact
+{
+}
+
+public class Fact : BaseFact
+{
+    private bool SharesSomeValue(TryFact other) =>
+        Values.Zip(other.Values).Any(x => x.First.HasValue && x.First == x.Second);
+
+    private bool DiffersInSomeValue(TryFact other) =>
+        Values.Zip(other.Values).Any(x => x.First.HasValue && x.Second.HasValue && x.First != x.Second);
+
+    public bool Contradicts(TryFact other) =>
+        SharesSomeValue(other) && DiffersInSomeValue(other);
 }
 
 public class ColorPositionFact
@@ -40,12 +53,66 @@ public class ColorPositionFact
     public Color LeftColor {get; set;}
     public int MinPositionRightColor = 2;
     public int MaxPositionLeftColor = 4;
+
+    public bool Contradicts(TryFact other) =>
+        (other.Color == LeftColor && other.Position > MaxPositionLeftColor) ||
+        (other.Color == RightColor && other.Position < MinPositionRightColor);
+
+    public bool MatchesPositions(TryFact[] several)
+    {
+        var stage = 0; // 0=NotFound, 1=FoundFirstItem, 2=BothMatch
+        for (int position = 0; position < several.Length; position++)
+        {
+            var item = several[position];
+            if (item.Color == LeftColor)
+            {
+                if (stage == 0)
+                    stage = 1;
+                else
+                    return false;
+            }
+            else if (item.Color == RightColor)
+            {
+                if (stage == 1)
+                    stage = 2;
+                else
+                    return false;
+            }
+            else if (stage == 1)
+                return false;
+        }
+        return stage == 2;
+    }
 }
 
 public class NextSmokePetFact
 {
     public Pet Pet {get; set;}
     public Smoke Smoke {get; set;}
+
+    public bool MatchesPositions(TryFact[] several)
+    {
+        var found = 0;
+        var lastFirstPosition = several.Length - 1;
+        for (int firstPosition = 0; firstPosition < lastFirstPosition; firstPosition++)
+        {
+            var firstItem = several[firstPosition];
+            if (firstItem.Pet == Pet)
+            {
+                var secondItem = several[firstPosition++];
+                if (Smoke != secondItem.Smoke)
+                {
+                    return false;
+                }
+                found = true;
+            }
+            else if (firstItem.Smoke == Smoke)
+            {
+                return false;
+            }
+        }
+        return found;
+    }
 }
 
 public class NextNationalityColorFact
@@ -81,105 +148,125 @@ public static class Facts
     public static NextNationalityColorFact[] NextNationalityColors = new [] {
         new NextNationalityColorFact { Nationality = Nationality.Norwegian, Color = Color.Blue }, // rule 15
     };
-
-    public static Fact[] Nationalities => Direct.Where(x => x.Nationality != null).ToArray();
-    public static Fact[] Colors => Direct.Where(x => x.Color != null).ToArray();
-    public static Fact[] Pets => Direct.Where(x => x.Pet != null).ToArray();
-    public static Fact[] Drinks => Direct.Where(x => x.Drink != null).ToArray();
-    public static Fact[] Smokes => Direct.Where(x => x.Smoke != null).ToArray();
 }
-
+/*
 public class ZebraPuzzleSolver
 {
-    private bool IsRejected(Fact fact) {
-        switch (fact.GetPropsMissing()) {
-            case 5: //Color
-                return false;
-            case 4: //Color + Nationality
-                if (Facts.Nationalities.FirstOrDefault(x => x.Nationality == fact.Nationality) is Fact c1) {
-                    return c1.Color != fact.Color;
-                }
-                return false;
-            case 0:
-                if (Facts.NextNationalityColors.FirstOrDefault(x => x.Color == fact.Color) is NextNationalityColorFact nColor) {
-                    return Solve(nColor.Nationality);
-                }
-                if (Facts.NextNationalityColors.FirstOrDefault(x => x.Nationality == fact.Nationality) is NextNationalityColorFact nNat) {
-                    return Solve(nNat.Color);
-                }
-                return false;
-        }
+    private bool IsRejected(Solution solution) {
 	}
 
-    private bool IsAccepted(Fact fact) {
-        if (fact.GetPropsMissing() < 0) {
+    private bool IsAccepted(Solution solution) {
+        if (solution.IsInvalid()) {
             return false;
         }
         return true;
 	}
 
-    private Fact GetFirst(Fact fact) {
-        switch (fact.GetPropsMissing()) {
-            case 1: return Facts.Colors[0];
+    private Solution GetFirst(Solution solution) {
+        switch (solution.GetMissingFacts()) {
+            case 1:
+                return Facts.Colors[0];
         }
 	}
 
-    private Fact GetNext(Fact fact) {
-        var i = ++fact.TryIndex;
-        switch (fact.GetPropsMissing()) {
+    private Solution GetNext(Solution solution) {
+        var i = ++solution.TryIndex;
+        switch (solution.GetMissingFacts()) {
             case 1: return Facts.Colors[i];
         }
 	}
 
-    private IEnumerable<Fact> Backtrack(Fact fact) {
-        if (IsRejected(fact)) { yield break; }
-        if (IsAccepted(fact)) { yield return fact; }
-        var newFact = GetFirst(fact);
-        List<Fact> results = new List<Fact>();
-        while (newFact != null) {
-            results.AddRange(Backtrack(newFact));
-            newFact = GetNext(newFact);
+    private IEnumerable<Solution> Backtrack(Solution solution) {
+        if (IsRejected(solution)) { yield break; }
+        if (IsAccepted(solution)) { yield return solution; }
+        var newSolution = GetFirst(solution);
+        List<Solution> finalSolutions = new List<Solution>();
+        while (newSolution != null) {
+            finalSolutions.AddRange(Backtrack(newSolution));
+            newSolution = GetNext(newSolution);
 		}
-        foreach (var r in results) {
-            yield return r;
+        foreach (var finalSolution in finalSolutions) {
+            yield return finalSolution;
         }
 	}
 
-    private Fact[] solved = Array.Empty<Fact>();
+    private Solution solution = new Solution();
 
-    public Fact[] Solve() {
-        if (solved.Length == 0)
-        {
-            IEnumerable<Fact> facts = Backtrack(new Fact());
-            solved = facts.ToArray();
-            if (solved.Length != 5) {
-                throw new Exception($"Expected 5 solutions but got {solved.Length}");
+    public Solution Solve() {
+        solution = Backtrack(solution).Single();
+        return solution;
+    }
+    
+    public class Solution
+    {
+        private Fact[] facts = Enumerable.Range(1, 5).Select(x => new Fact { Position = x }).ToArray();
+
+        internal Solution() {}
+
+        public bool IsInvalid() {
+            if (facts.Any(x => x.Position == )){
+                return true;
             }
+            if (Facts.NextNationalityColors.FirstOrDefault(x => x.Color == solution.Color) is NextNationalityColorFact nColor) {
+                return Solve(nColor.Nationality);
+            }
+            if (Facts.NextNationalityColors.FirstOrDefault(x => x.Nationality == solution.Nationality) is NextNationalityColorFact nNat) {
+                return Solve(nNat.Color);
+            }
+            return false;
         }
-        return solved;
+
+        public Nationality GetNationality(Func<Fact, bool> func)
+        {
+            var first = facts.First(func);
+            if (!first.Nationality.HasValue) {
+                throw new Exception($"first.Nationality should not be null: {first.Position}: {first.Pet}");
+            }
+            return first.Nationality.Value;
+        }
     }
 }
+*/
+public  class ZebraPuzzleSolver
+{
+    public Solution Solve() {
+        return new Solution();
+    }
+    
+    public class Solution
+    {
+        private Fact[] facts = Enumerable.Range(1, 5).Select(x => new Fact { Position = x }).ToArray();
 
+        internal Solution() {}
+
+        public bool IsInvalid() {
+            if (facts.Any(x => true)){
+                return true;
+            }
+            return false;
+        }
+
+        public Nationality GetNationality(Func<Fact, bool> func)
+        {
+            var first = facts.First(func);
+            if (!first.Nationality.HasValue) {
+                throw new Exception($"first.Nationality should not be null: {first.Position}: {first.Pet}");
+            }
+            return first.Nationality.Value;
+        }
+    }
+}
 public static class ZebraPuzzle
 {
-    private static ZebraPuzzleSolver solver = new ZebraPuzzleSolver();
-
-    public static Nationality GetNationality(Func<Fact, bool> factFunc)
-    {
-        var first = solver.Solve().First(factFunc);
-        if (!first.Nationality.HasValue) {
-            throw new Exception($"first.Nationality should not be null: {first.Position}: {first.Pet}");
-        }
-        return first.Nationality.Value;
-    }
+    private static ZebraPuzzleSolver.Solution solution = new ZebraPuzzleSolver().Solve();
 
     public static Nationality DrinksWater()
     {
-        return GetNationality(x => x.Drink == Drink.Water);
+        return solution.GetNationality(x => x.Drink == Drink.Water);
     }
 
     public static Nationality OwnsZebra()
     {
-        return GetNationality(x => x.Pet == Pet.Zebra);
+        return solution.GetNationality(x => x.Pet == Pet.Zebra);
     }
 }
