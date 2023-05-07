@@ -2,14 +2,12 @@
 {
     public record ColorPositionRule
     {
-        private const int MinPositionRightColor = 2;
-        private const int MaxPositionLeftColor = 4;
         public Color RightColor { get; set; }
         public Color LeftColor { get; set; }
 
         public bool Contradicts(Hypothesis hypothesis) =>
-            (hypothesis.Color == LeftColor && hypothesis.Position > MaxPositionLeftColor) ||
-            (hypothesis.Color == RightColor && hypothesis.Position < MinPositionRightColor);
+            (hypothesis.Color == LeftColor && hypothesis.Position == 5) ||
+            (hypothesis.Color == RightColor && hypothesis.Position == 1);
 
         public bool MatchesPositions(IEnumerable<Hypothesis> hypotheses)
         {

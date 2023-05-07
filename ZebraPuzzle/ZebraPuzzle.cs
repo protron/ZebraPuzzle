@@ -6,16 +6,21 @@ namespace ZebraPuzzle
 {
     public static class ZebraPuzzle
     {
-        private static Solution solution = new Solver().Solve();
+        private static Solution? solution;
 
-        public static Nationality DrinksWater()
+        private static Nationality GetNationality(Func<Hypothesis, bool> func)
         {
-            return solution.GetNationality(x => x.Drink == Drink.Water);
+            solution ??= new Solver().Solve();
+            var first = solution.Hypotheses.FirstOrDefault(func);
+            if (first == null)
+                throw new ApplicationException("Hypotheses filled but condition 'func' does not match any");
+            if (!first.Nationality.HasValue)
+                throw new ApplicationException($"first.Nationality should not be null: {first.Position}: {first.Pet}");
+            return first.Nationality.Value;
         }
 
-        public static Nationality OwnsZebra()
-        {
-            return solution.GetNationality(x => x.Pet == Pet.Zebra);
-        }
+        public static Nationality DrinksWater() => GetNationality(x => x.Drink == Drink.Water);
+
+        public static Nationality OwnsZebra() => GetNationality(x => x.Pet == Pet.Zebra);
     }
 }

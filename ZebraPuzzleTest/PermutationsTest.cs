@@ -9,7 +9,7 @@ namespace ZebraPuzzleTest
         enum TestEnum5 { T1, T2, T3, T4, T5 }
 
         [Fact]
-        public void Permutations_FromEnum_TestEnum3()
+        public void FromEnum_TestEnum3_ReturnsExpected6SetsOf3Each()
         {
             var actual = Permutations.FromEnum<TestEnum3>();
             var expected = new[] {
@@ -24,13 +24,26 @@ namespace ZebraPuzzleTest
         }
 
         [Fact]
-        public void Permutations_FromEnum_TestEnum5()
+        public void FromEnum_TestEnum5_ContainsAValidCase()
         {
             var actual = Permutations.FromEnum<TestEnum5>();
-            Assert.Equal(120, actual.Length);
-            Assert.All(actual, x => Assert.Equal(5, x.Length));
             Assert.Contains(new[] { TestEnum5.T4, TestEnum5.T2, TestEnum5.T1, TestEnum5.T5, TestEnum5.T3 }, actual);
+        }
+
+        [Fact]
+        public void FromEnum_TestEnum5_DoesNotContainRepetitions()
+        {
+            var actual = Permutations.FromEnum<TestEnum5>();
             Assert.DoesNotContain(new[] { TestEnum5.T2, TestEnum5.T2, TestEnum5.T1, TestEnum5.T5, TestEnum5.T3 }, actual);
+        }
+
+        [Fact]
+        public void FromEnum_TestEnum5_Returns120SetsOf5Each()
+        {
+            var actual = Permutations.FromEnum<TestEnum5>();
+            List<IList<TestEnum5>> r = actual.ToList();
+            Assert.Equal(120, r.Count);
+            Assert.All(r, x => Assert.Equal(5, x.Count));
         }
     }
 }
