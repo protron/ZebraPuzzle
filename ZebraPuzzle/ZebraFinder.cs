@@ -11,7 +11,15 @@
             if (solution.Level > 4)
                 return null;
             var newSolution = solution with { Level = solution.Level + 1 };
-            return GetNext(newSolution)!;
+            return newSolution.Level switch
+            {
+                1 => newSolution.InitColors(),
+                2 => newSolution.InitNationalities(),
+                3 => newSolution.InitPets(),
+                4 => newSolution.InitDrinks(),
+                5 => newSolution.InitSmokes(),
+                _ => throw new IndexOutOfRangeException(),
+            };
         }
 
         public Solution? GetNext(Solution solution)

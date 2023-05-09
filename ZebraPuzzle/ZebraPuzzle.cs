@@ -11,7 +11,7 @@ namespace ZebraPuzzle
         private static Solution Solve()
         {
             var finder = new ZebraFinder();
-            var initialSolution = new Solution();
+            var initialSolution = Solution.Init();
             var backtracker = new Backtracker<Solution>(finder);
             var solution = backtracker.Recurse(initialSolution);
             if (solution == null)
