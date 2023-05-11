@@ -10,7 +10,7 @@
 
         private Solution? Set(int attIndex, int nextNumber)
         {
-            if (nextNumber > 4)
+            if (nextNumber >= 120)
                 return null;
             return this with
             {
@@ -23,7 +23,7 @@
 
         private Solution? Next(int attIndex) => Set(attIndex, numberGetters[attIndex](Numbers) + 1);
 
-        private readonly new Func<CombinationNumbers, int>[] numberGetters = new Func<CombinationNumbers, int>[] {
+        private readonly Func<CombinationNumbers, int>[] numberGetters = new Func<CombinationNumbers, int>[] {
             (numbers) => numbers.ColorIndex,
             (numbers) => numbers.NationalityIndex,
             (numbers) => numbers.PetIndex,
