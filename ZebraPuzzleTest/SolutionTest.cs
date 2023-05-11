@@ -5,7 +5,7 @@ namespace ZebraPuzzleTest
     public class SolutionTest
     {
         [Fact]
-        public void Test1()
+        public void TestSomeColorsAndNationalitiesAndBackToMoreColorsWithoutNationalities()
         {
             var initialSolution = Solution.Init();
             Assert.All(initialSolution.Hypotheses.Select(x => x.Color), x => Assert.Null(x));
@@ -34,6 +34,20 @@ namespace ZebraPuzzleTest
             var solution43 = solution42.NextSetOfColors()!;
             TestColors(solution43, Color.Red, Color.Green, Color.Blue, Color.Ivory, Color.Yellow);
             TestNationalities(solution42, Nationality.Englishman, Nationality.Spaniard, Nationality.Ukranian, Nationality.Norwegian, Nationality.Japanese);
+        }
+
+        [Fact]
+        public void Test120ColorCombinations()
+        {
+            var initialSolution = Solution.Init();
+            var solution = initialSolution.InitColors();
+            TestColors(solution, Color.Red, Color.Green, Color.Ivory, Color.Yellow, Color.Blue);
+            for (int i = 1; i < 120; i++)
+            {
+                solution = solution.NextSetOfColors()!;
+            }
+            TestColors(solution, Color.Blue, Color.Yellow, Color.Ivory, Color.Green, Color.Red);
+            Assert.Null(solution.NextSetOfColors());
         }
 
         private static void TestColors(Solution? solution, params Color?[] expectedColors)

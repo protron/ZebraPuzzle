@@ -1,6 +1,6 @@
 ﻿namespace ZebraPuzzle
 {
-    public record Rule : BaseRule
+    public sealed record CommonRule : BaseRule, IContradictableRule
     {
         private bool SharesSomeValue(Hypothesis hypothesis) =>
             Values.Zip(hypothesis.Values).Any(x => x.First.HasValue && x.First == x.Second);

@@ -2,17 +2,17 @@ namespace ZebraPuzzle
 {
     public static class AllRules
     {
-        public static readonly Rule[] Direct = new[] {
-            new Rule { Nationality = Nationality.Englishman, Color = Color.Red }, // rule 2
-            new Rule { Nationality = Nationality.Spaniard, Pet = Pet.Dog }, // rule 3
-            new Rule { Drink = Drink.Coffee, Color = Color.Green }, // rule 4
-            new Rule { Nationality = Nationality.Ukranian, Drink = Drink.Tea }, // rule  5
-            new Rule { Smoke = Smoke.OldGold, Pet = Pet.Snails }, // rule 7
-            new Rule { Smoke = Smoke.Kools, Color = Color.Yellow }, // rule 8
-            new Rule { Drink = Drink.Milk, Position = 3 }, // rule 9
-            new Rule { Nationality = Nationality.Norwegian, Position = 1 }, // rule 10
-            new Rule { Smoke = Smoke.LuckyStrike, Drink = Drink.OrangeJuice }, // rule 13
-            new Rule { Nationality = Nationality.Japanese, Smoke = Smoke.Parliaments }, // rule 14
+        public static readonly CommonRule[] Direct = new[] {
+            new CommonRule { Nationality = Nationality.Englishman, Color = Color.Red }, // rule 2
+            new CommonRule { Nationality = Nationality.Spaniard, Pet = Pet.Dog }, // rule 3
+            new CommonRule { Drink = Drink.Coffee, Color = Color.Green }, // rule 4
+            new CommonRule { Nationality = Nationality.Ukranian, Drink = Drink.Tea }, // rule  5
+            new CommonRule { Smoke = Smoke.OldGold, Pet = Pet.Snails }, // rule 7
+            new CommonRule { Smoke = Smoke.Kools, Color = Color.Yellow }, // rule 8
+            new CommonRule { Drink = Drink.Milk, Position = 3 }, // rule 9
+            new CommonRule { Nationality = Nationality.Norwegian, Position = 1 }, // rule 10
+            new CommonRule { Smoke = Smoke.LuckyStrike, Drink = Drink.OrangeJuice }, // rule 13
+            new CommonRule { Nationality = Nationality.Japanese, Smoke = Smoke.Parliaments }, // rule 14
         };
 
         public static readonly ColorPositionRule[] ColorPositions = new[] {

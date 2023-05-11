@@ -1,22 +1,36 @@
 ﻿namespace ZebraPuzzle
 {
-    public record CombinationNumbers(int ColorIndex = 0, int NationalityIndex = 0, int PetIndex = 0, int DrinkIndex = 0, int SmokeIndex = 0);
+    public record CombinationNumbers(
+        int ColorIndex = 0,
+        int NationalityIndex = 0,
+        int PetIndex = 0,
+        int DrinkIndex = 0,
+        int SmokeIndex = 0);
 
-    public record Solution(CombinationNumbers Numbers, int Level = 0)
+    public record Solution(int Level, CombinationNumbers Numbers, Hypothesis H1, Hypothesis H2, Hypothesis H3, Hypothesis H4, Hypothesis H5)
     {
-        public static Solution Init() => new Solution(new CombinationNumbers());
+        public static Solution Init() => new Solution();
 
-        public Hypothesis[] Hypotheses = Enumerable.Range(1, 5).Select(x => new Hypothesis { Position = x }).ToArray();
+        public readonly Hypothesis[] Hypotheses = new[] { H1, H2, H3, H4, H5 };
+
+        public Solution() : this(0, new CombinationNumbers(), new(1), new(2), new(3), new(4), new(5))
+        {
+        }
+
+        private const int CombinationsPerProp = 120; // 5 ^ 5
 
         private Solution? Set(int attIndex, int nextNumber)
         {
-            if (nextNumber >= 120)
+            if (nextNumber >= CombinationsPerProp)
                 return null;
-            return this with
-            {
-                Numbers = numbersSetters[attIndex](Numbers, nextNumber),
-                Hypotheses = Hypotheses.Select((h, hIndex) => (hypothesisSetters[attIndex](h, hIndex, nextNumber))).ToArray()
-            };
+            return new Solution(
+                Level,
+                numbersSetters[attIndex](Numbers, nextNumber),
+                hypothesisSetters[attIndex](H1, 0, nextNumber),
+                hypothesisSetters[attIndex](H2, 1, nextNumber),
+                hypothesisSetters[attIndex](H3, 2, nextNumber),
+                hypothesisSetters[attIndex](H4, 3, nextNumber),
+                hypothesisSetters[attIndex](H5, 4, nextNumber));
         }
 
         private Solution Init(int attIndex) => Set(attIndex, 0)!;
@@ -57,26 +71,5 @@
         public Solution? NextSetOfDrinks() => Next(3);
         public Solution InitSmokes() => Init(4);
         public Solution? NextSetOfSmokes() => Next(4);
-
-
-        public bool ContradictsSomeRule()
-        {
-            if (AllRules.Direct.Any(r => Hypotheses.Any(h => r.Contradicts(h))))
-                return true;
-            if (AllRules.ColorPositions.Any(r => Hypotheses.Any(h => r.Contradicts(h))))
-                return true;
-            return false;
-        }
-
-        public bool MatchesPositions()
-        {
-            if (AllRules.ColorPositions.Any(r => !r.MatchesPositions(Hypotheses)))
-                return false;
-            if (AllRules.NextNationalityColors.Any(r => !r.MatchesPositions(Hypotheses)))
-                return false;
-            if (AllRules.NextSmokePets.Any(r => !r.MatchesPositions(Hypotheses)))
-                return false;
-            return true;
-        }
     }
 }

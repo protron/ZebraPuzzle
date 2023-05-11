@@ -1,6 +1,6 @@
 ﻿namespace ZebraPuzzle
 {
-    public record BaseRule
+    public abstract record BaseRule
     {
         public int? Position { get; set; }
         public Color? Color { get; set; }

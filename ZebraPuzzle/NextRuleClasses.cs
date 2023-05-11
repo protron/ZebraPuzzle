@@ -33,7 +33,7 @@
         }
     }
 
-    public record NextNationalityColorRule : NextRuleBase
+    public record NextNationalityColorRule : NextRuleBase, IMatchablePositionRule
     {
         public Nationality Nationality { get; set; }
         public Color Color { get; set; }
@@ -45,7 +45,7 @@
                 x => x.Color == Color);
     }
 
-    public record NextSmokePetRule : NextRuleBase
+    public record NextSmokePetRule : NextRuleBase, IMatchablePositionRule
     {
         public Pet Pet { get; set; }
         public Smoke Smoke { get; set; }

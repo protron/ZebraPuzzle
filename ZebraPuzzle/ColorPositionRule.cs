@@ -1,6 +1,6 @@
 ﻿namespace ZebraPuzzle
 {
-    public record ColorPositionRule
+    public record ColorPositionRule : IContradictableRule, IMatchablePositionRule
     {
         public Color RightColor { get; set; }
         public Color LeftColor { get; set; }

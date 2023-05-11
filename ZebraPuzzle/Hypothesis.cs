@@ -1,6 +1,14 @@
 ﻿namespace ZebraPuzzle
 {
-    public record Hypothesis : BaseRule
+    public sealed record Hypothesis : BaseRule
     {
+        public Hypothesis()
+        {
+        }
+
+        public Hypothesis(int position)
+        {
+            Position = position;
+        }
     }
 }
