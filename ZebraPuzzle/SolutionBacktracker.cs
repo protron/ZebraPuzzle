@@ -1,8 +1,8 @@
 ﻿namespace ZebraPuzzle
 {
-    public class SolutionFinder : Backtracker<Solution>.IFinder
+    public sealed class SolutionBacktracker : BaseBacktracker<Solution>
     {
-        public bool IsRejected(Solution solution)
+        protected override bool IsRejected(Solution solution)
         {
             if (ContradictsAny(AllRules.Direct))
                 return true;
@@ -14,7 +14,7 @@
                 contradictableRules.Any(r => solution.Hypotheses.Any(h => r.Contradicts(h)));
         }
 
-        public bool IsAccepted(Solution solution)
+        protected override bool IsAccepted(Solution solution)
         {
             if (solution.Level != 5)
                 return false;
@@ -30,7 +30,7 @@
                 matchablePositionRules.All(r => r.MatchesPositions(solution.Hypotheses));
         }
 
-        public Solution? GetFirst(Solution solution)
+        protected override Solution? GetFirst(Solution solution)
         {
             if (solution.Level > 4)
                 return null;
@@ -46,7 +46,7 @@
             };
         }
 
-        public Solution? GetNext(Solution solution)
+        protected override Solution? GetNext(Solution solution)
         {
             return solution.Level switch
             {

@@ -9,13 +9,9 @@
 
     public record Solution(int Level, CombinationNumbers Numbers, Hypothesis H1, Hypothesis H2, Hypothesis H3, Hypothesis H4, Hypothesis H5)
     {
-        public static Solution Init() => new Solution();
+        public static Solution BuildInitial() => new Solution(0, new CombinationNumbers(), new(1), new(2), new(3), new(4), new(5));
 
         public readonly Hypothesis[] Hypotheses = new[] { H1, H2, H3, H4, H5 };
-
-        public Solution() : this(0, new CombinationNumbers(), new(1), new(2), new(3), new(4), new(5))
-        {
-        }
 
         private const int CombinationsPerProp = 120; // 5 ^ 5
 

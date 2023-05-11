@@ -10,9 +10,8 @@ namespace ZebraPuzzle
 
         private static Solution Solve()
         {
-            var finder = new SolutionFinder();
-            var initialSolution = Solution.Init();
-            var backtracker = new Backtracker<Solution>(finder);
+            var initialSolution = Solution.BuildInitial();
+            var backtracker = new SolutionBacktracker();
             var solution = backtracker.Recurse(initialSolution);
             if (solution == null)
                 throw new ApplicationException("Solution not found");

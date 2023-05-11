@@ -12,13 +12,13 @@ namespace ZebraPuzzleTest
             public int C { get; set; }
         }
 
-        public class Test1Finder : Backtracker<Test1Solution>.IFinder
+        public class Test1Backtracker : BaseBacktracker<Test1Solution>
         {
-            public bool IsRejected(Test1Solution s) => s.A > 1 || s.B > 2 || s.C > 3;
+            protected override bool IsRejected(Test1Solution s) => s.A > 1 || s.B > 2 || s.C > 3;
 
-            public bool IsAccepted(Test1Solution s) => (s.A == 1) && (s.B == 2) && (s.C == 3);
+            protected override bool IsAccepted(Test1Solution s) => (s.A == 1) && (s.B == 2) && (s.C == 3);
 
-            public Test1Solution? GetFirst(Test1Solution s) => s.Level switch
+            protected override Test1Solution? GetFirst(Test1Solution s) => s.Level switch
             {
                 0 => s with { Level = 1, A = 1 },
                 1 => s with { Level = 2, B = 1 },
@@ -26,7 +26,7 @@ namespace ZebraPuzzleTest
                 _ => null,
             };
 
-            public Test1Solution? GetNext(Test1Solution s) => s.Level switch
+            protected override Test1Solution? GetNext(Test1Solution s) => s.Level switch
             {
                 1 when s.A < 1 => s with { A = s.A + 1 },
                 2 when s.B < 2 => s with { B = s.B + 1 },
@@ -38,9 +38,8 @@ namespace ZebraPuzzleTest
         [Fact]
         public void Test1()
         {
-            var finder = new Test1Finder();
+            var backtracker = new Test1Backtracker();
             var initialSolution = new Test1Solution();
-            var backtracker = new Backtracker<Test1Solution>(finder);
             var result = backtracker.Recurse(initialSolution);
             Assert.NotNull(result);
             Assert.Equal(1, result.A);

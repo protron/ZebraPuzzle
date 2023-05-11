@@ -7,7 +7,7 @@ namespace ZebraPuzzleTest
         [Fact]
         public void TestSomeColorsAndNationalitiesAndBackToMoreColorsWithoutNationalities()
         {
-            var initialSolution = Solution.Init();
+            var initialSolution = Solution.BuildInitial();
             Assert.All(initialSolution.Hypotheses.Select(x => x.Color), x => Assert.Null(x));
             var solution1 = initialSolution.InitColors();
             TestColors(solution1, Color.Red, Color.Green, Color.Ivory, Color.Yellow, Color.Blue);
@@ -39,7 +39,7 @@ namespace ZebraPuzzleTest
         [Fact]
         public void Test120ColorCombinations()
         {
-            var initialSolution = Solution.Init();
+            var initialSolution = Solution.BuildInitial();
             var solution = initialSolution.InitColors();
             TestColors(solution, Color.Red, Color.Green, Color.Ivory, Color.Yellow, Color.Blue);
             for (int i = 1; i < 120; i++)
