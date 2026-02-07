@@ -9,14 +9,25 @@
 
         public T? Recurse(T solution)
         {
+            // start recursion with a visited set to avoid cycles / infinite loops
+            var visited = new HashSet<T>(EqualityComparer<T>.Default);
+            return Recurse(solution, visited);
+        }
+
+        private T? Recurse(T solution, HashSet<T> visited)
+        {
+            if (!visited.Add(solution))
+                return null;
+
             if (IsRejected(solution))
                 return null;
             if (IsAccepted(solution))
                 return solution;
+
             var newSolution = GetFirst(solution);
             while (newSolution != null)
             {
-                var triedSolution = Recurse(newSolution);
+                var triedSolution = Recurse(newSolution, visited);
                 if (triedSolution != null)
                     return triedSolution;
                 else
