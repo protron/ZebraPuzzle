@@ -23,7 +23,7 @@
 
         private Solution? Set(int hIndex, int pIndex)
         {
-            if (pIndex >= AllPermutations.PermutationsCount)
+            if (pIndex < 0 || pIndex >= AllPermutations.PermutationsCount)
                 return null;
             var hypothesisSetter = hypothesisSetters[hIndex];
             var permutationSetter = permutationSetters[hIndex];
