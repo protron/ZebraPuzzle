@@ -12,7 +12,7 @@ namespace ZebraPuzzle
         {
             var initialSolution = Solution.BuildInitial();
             var backtracker = new SolutionBacktracker();
-            var solution = backtracker.Recurse(initialSolution);
+            solution = backtracker.Recurse(initialSolution);
             if (solution == null)
                 throw new ApplicationException("Solution not found");
             if (solution.Level < 5)
