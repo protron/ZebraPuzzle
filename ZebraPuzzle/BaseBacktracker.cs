@@ -6,17 +6,18 @@
         abstract protected bool IsAccepted(T solution);
         abstract protected T? GetFirst(T solution);
         abstract protected T? GetNext(T solution);
+        abstract protected string GetStateKey(T solution);
 
         public T? Recurse(T solution)
         {
-            // start recursion with a visited set to avoid cycles / infinite loops
-            var visited = new HashSet<T>(EqualityComparer<T>.Default);
+            var visited = new HashSet<string>();
             return Recurse(solution, visited);
         }
 
-        private T? Recurse(T solution, HashSet<T> visited)
+        private T? Recurse(T solution, HashSet<string> visited)
         {
-            if (!visited.Add(solution))
+            var stateKey = GetStateKey(solution);
+            if (!visited.Add(stateKey))
                 return null;
 
             if (IsRejected(solution))

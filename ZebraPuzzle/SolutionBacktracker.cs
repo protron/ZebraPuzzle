@@ -58,5 +58,7 @@
                 _ => throw new IndexOutOfRangeException(),
             };
         }
+
+        protected override string GetStateKey(Solution solution) => solution.GetStateKey();
     }
 }

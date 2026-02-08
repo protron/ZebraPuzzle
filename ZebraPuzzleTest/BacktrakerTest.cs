@@ -33,6 +33,9 @@ namespace ZebraPuzzleTest
                 3 when s.C < 3 => s with { C = s.C + 1 },
                 _ => null
             };
+
+            protected override string GetStateKey(Test1Solution solution) =>
+                $"{solution.Level}:{solution.A}:{solution.B}:{solution.C}";
         }
 
         [Fact]

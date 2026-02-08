@@ -21,6 +21,9 @@
 
         public Hypothesis[] Hypotheses => new[] { H1, H2, H3, H4, H5 };
 
+        public string GetStateKey() =>
+            $"{Level}:{PIndices.ColorIndex},{PIndices.NationalityIndex},{PIndices.PetIndex},{PIndices.DrinkIndex},{PIndices.SmokeIndex}";
+
         private Solution? Set(int hIndex, int pIndex)
         {
             if (pIndex < 0 || pIndex >= AllPermutations.PermutationsCount)
